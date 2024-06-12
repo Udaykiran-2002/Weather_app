@@ -46,10 +46,15 @@ h1 {
     background-color: #0056b3;
 }
 
-.weather-info, .forecast, .map {
+.forecast, .map {
+    display: flex;
     margin-top: 20px;
     padding: 10px;
 }
+.weather-info{
+    margin-top: 20px;
+    padding: 10px;
+} 
 
 .map iframe {
     width: 100%;
