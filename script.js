@@ -1,3 +1,4 @@
+// Script file
 const apiKey = '599a63ab35897403038317ad37243ba1';
 
 function getWeather() {
