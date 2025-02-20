@@ -1,67 +1,117 @@
-// Script file
-const apiKey = '599a63ab35897403038317ad37243ba1';
+const apiKey = "f4e659302a0ca812364cc2c534b3a6d5";
+const cityInput = document.getElementById("city-input");
+const searchBtn = document.getElementById("search-btn");
+const refreshBtn = document.getElementById("refresh-btn");
+const loading = document.getElementById("loading");
+const error = document.getElementById("error");
+const weatherInfo = document.getElementById("weather-info");
+const cityName = document.getElementById("city-name");
+const currentWeather = document.getElementById("current-weather");
+const forecast = document.getElementById("forecast");
 
-function getWeather() {
-    const city = document.getElementById('city').value;
-    if (!city) {
-        alert('Please enter a city name.');
-        return;
+// Load favorite city from localStorage
+let favoriteCity = localStorage.getItem("favoriteCity");
+if (favoriteCity) {
+  cityInput.value = favoriteCity;
+  fetchWeather(favoriteCity);
+}
+
+searchBtn.addEventListener("click", () => {
+  const city = cityInput.value.trim();
+  if (city) {
+    fetchWeather(city);
+  }
+});
+
+refreshBtn.addEventListener("click", () => {
+  const city = cityInput.value.trim();
+  if (city) {
+    fetchWeather(city);
+  }
+});
+
+async function fetchWeather(city) {
+  try {
+    // Show loading and hide error/weather info
+    showLoading();
+    hideError();
+    hideWeatherInfo();
+
+    const currentWeatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+    const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`;
+
+    const [currentResponse, forecastResponse] = await Promise.all([
+      fetch(currentWeatherUrl),
+      fetch(forecastUrl),
+    ]);
+
+    // Check if responses are OK
+    if (!currentResponse.ok || !forecastResponse.ok) {
+      throw new Error("City not found");
     }
 
-    fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`)
-        .then(response => response.json())
-        .then(data => {
-            displayWeather(data);
-            getForecast(city);
-            displayMap(data.coord.lat, data.coord.lon);
-        })
-        .catch(error => {
-            console.error('Error fetching weather data:', error);
-            alert('Error fetching weather data. Please try again.');
-        });
+    const currentData = await currentResponse.json();
+    const forecastData = await forecastResponse.json();
+
+    // Display weather data and hide loading/error
+    displayWeather(currentData, forecastData);
+    hideError();
+  } catch (err) {
+    // Show error and hide weather info
+    showError();
+    hideWeatherInfo();
+  } finally {
+    // Always hide loading
+    hideLoading();
+  }
 }
 
-function displayWeather(data) {
-    const weatherInfo = document.getElementById('weather-info');
-    weatherInfo.innerHTML = `
-        <h2>${data.name}, ${data.sys.country}</h2>
-        <p>Temperature: ${data.main.temp}°C</p>
-        <p>Weather: ${data.weather[0].description}</p>
-        <p>Humidity: ${data.main.humidity}%</p>
-        <p>Wind Speed: ${data.wind.speed} m/s</p>
+function displayWeather(currentData, forecastData) {
+  cityName.textContent = currentData.name;
+  currentWeather.innerHTML = `
+    <p>🌡️ Temperature: ${currentData.main.temp}°C</p>
+    <p>🌤️ Condition: ${currentData.weather[0].description}</p>
+    <img class="weather-icon" src="http://openweathermap.org/img/wn/${currentData.weather[0].icon}@2x.png" alt="${currentData.weather[0].description}">
+  `;
+
+  forecast.innerHTML = "";
+  for (let i = 0; i < forecastData.list.length; i += 8) {
+    const day = forecastData.list[i];
+    const date = new Date(day.dt * 1000).toLocaleDateString();
+    forecast.innerHTML += `
+      <div class="forecast-item">
+        <span>📅 ${date}</span>
+        <span>🌡️ ${day.main.temp}°C</span>
+        <span>🌤️ ${day.weather[0].description}</span>
+        <img class="weather-icon" src="http://openweathermap.org/img/wn/${day.weather[0].icon}@2x.png" alt="${day.weather[0].description}">
+      </div>
     `;
+  }
+
+  // Show weather info
+  showWeatherInfo();
 }
 
-function getForecast(city) {
-    fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`)
-        .then(response => response.json())
-        .then(data => {
-            displayForecast(data);
-        })
-        .catch(error => {
-            console.error('Error fetching forecast data:', error);
-            alert('Error fetching forecast data. Please try again.');
-        });
+function showLoading() {
+  loading.classList.remove("hidden");
 }
 
-function displayForecast(data) {
-    const forecast = document.getElementById('forecast');
-    forecast.innerHTML = '<h3>5-Day Forecast:</h3>';
-    data.list.forEach((item, index) => {
-        if (index % 8 === 0) {
-            const date = new Date(item.dt * 1000);
-            forecast.innerHTML += `
-                <div class="forecast-item">
-                    <p><strong>${date.toDateString()}</strong></p>
-                    <p>Temp: ${item.main.temp}°C</p>
-                    <p>Weather: ${item.weather[0].description}</p>
-                </div>
-            `;
-        }
-    });
+function hideLoading() {
+  loading.classList.add("hidden");
 }
 
-function displayMap(lat, lon) {
-    const map = document.getElementById('map');
-    map.innerHTML = `<iframe src="https://maps.google.com/maps?q=${lat},${lon}&z=12&output=embed"></iframe>`;
+function showError() {
+  error.classList.remove("hidden");
+}
+
+function hideError() {
+  error.classList.add("hidden");
+}
+
+function showWeatherInfo() {
+  weatherInfo.classList.remove("hidden");
+}
+
+function hideWeatherInfo() {
+  weatherInfo.classList.add("hidden");
 }
