@@ -1,28 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weather Dashboard</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather App</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Weather Dashboard</h1>
-        <div class="search">
-            <input type="text" id="city" placeholder="Enter city name">
-            <button onclick="getWeather()">Get Weather</button>
-        </div>
-        <div id="weather-info" class="weather-info">
-            
-        </div>
-        <div id="forecast" class="forecast">
-            
-        </div>
-        <div id="map" class="map">
-            <!-- Map will be displayed here -->
-        </div>
+  <div class="container">
+    <h1>🌤️ Weather App</h1>
+    <div class="search-box">
+      <input type="text" id="city-input" placeholder="Enter city name">
+      <button id="search-btn">Search</button>
+      <button id="refresh-btn">Refresh</button>
     </div>
-    <script src="script.js"></script>
+    <div id="loading" class="hidden">⏳</div>
+    <div id="error" class="hidden"></div>
+    <div id="weather-info" class="hidden">
+      <h2 id="city-name"></h2>
+      <div id="current-weather"></div>
+      <div id="forecast"></div>
+    </div>
+  </div>
+  <script src="script.js"></script>
 </body>
 </html>
