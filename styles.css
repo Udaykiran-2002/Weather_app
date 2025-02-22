@@ -133,8 +133,9 @@ h1 {
 .weather-icon {
   width: 50px;
   height: 50px;
-  filter: brightness(0) saturate(100%) hue-rotate(60deg); /* Adjust to make it yellow */
+  filter: brightness(0) saturate(100%) hue-rotate(60deg) brightness(1.5); /* Adjust to make it yellow or orange */
 }
+
 
 /* Existing CSS continues... */
 
