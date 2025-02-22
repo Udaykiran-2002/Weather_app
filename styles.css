@@ -11,7 +11,7 @@ body {
 }
 
 .container {
-  background: black;
+  background: grey;
   backdrop-filter: blur(10px);
   border-radius: 15px;
   padding: 30px;
