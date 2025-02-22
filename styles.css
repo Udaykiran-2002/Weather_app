@@ -127,12 +127,16 @@ h1 {
 .forecast-item span {
   font-size: 1rem;
 }
+/* Existing CSS here... */
 
+/* Add this new style for the sun icon */
 .weather-icon {
   width: 50px;
   height: 50px;
-  filter: brightness(0) invert(1) hue-rotate(60deg); /* Changes the icon color to yellow */
+  filter: brightness(0) saturate(100%) hue-rotate(60deg); /* Adjust to make it yellow */
 }
+
+/* Existing CSS continues... */
 
 /* Media Queries for Responsiveness */
 @media (max-width: 768px) {
